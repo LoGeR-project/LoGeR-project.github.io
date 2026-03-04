@@ -1,0 +1,501 @@
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LoGeR: Long-Context Geometric Reconstruction with Hybrid Memory</title>
+  <link href="./files/style.css" rel="stylesheet">
+  <script type="text/javascript" src="./files/jquery.mlens-1.0.min.js"></script>
+  <script type="text/javascript" src="./files/jquery.js"></script>
+  <style>
+    .divider {
+      border-right: 2px dashed #737373;
+      width: 2px;
+    }
+  </style>
+  <style>
+    .divider_horizontal {
+      border-top: 2px dashed #737373;
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+    }
+  </style>
+  <style>
+    body {
+      padding: 2em;
+      font-family: sans-serif;
+    }
+
+    iframe {
+      border-radius: 0.5em;
+      width: 27.5em;
+      height: 27.5em;
+      border: none;
+      box-shadow: 0 0 1em 0em rgba(0, 0, 0, 0.15);
+    }
+
+    @media (max-width: 768px) {
+      iframe {
+        width: 100%;
+        height: 30em;
+      }
+    }
+
+    a,
+    a:link {
+      color: #777;
+    }
+
+    .instructions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.2em;
+      text-align: center;
+      padding: 0.6em;
+    }
+
+    .instruction-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      font-size: 1.2em;
+    }
+
+    .instruction-item img {
+      width: 36px;
+      height: 36px;
+    }
+
+    .instructions_small {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1em;
+      text-align: center;
+      padding: 0.5em;
+    }
+
+    .instruction-item_small {
+      display: flex;
+      align-items: center;
+      gap: 0.3em;
+      font-size: 1.0em;
+    }
+
+    .instruction-item_small img {
+      width: 30px;
+      height: 30px;
+    }
+
+    .abstract {
+      max-width: 800px;
+      margin: 18px auto 0 auto;
+      font-size: 1.08em;
+      line-height: 1.6;
+      color: #2f2f2f;
+      text-align: justify;
+    }
+
+    .section-intro {
+      text-align: justify;
+      font-size: 1.1em;
+      color: #333;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .two-col {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .col-half {
+      flex: 1 1 440px;
+      min-width: 0;
+    }
+
+    .subcard {
+      background: #fbfbfb;
+      border-radius: 12px;
+      padding: 18px 20px 14px 20px;
+      box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    .subcard h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 24px;
+      font-weight: 300;
+    }
+
+    .caption,
+    .caption-left {
+      margin-top: 10px;
+      font-size: 0.9em;
+      color: #666;
+      font-style: italic;
+      border-left: 3px solid #ccc;
+      padding-left: 10px;
+      line-height: 1.5;
+      text-align: left;
+    }
+
+    .button-row a,
+    .button-row a:visited {
+      color: #224b8d;
+    }
+
+    .wide-img {
+      width: 100%;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .narrow-img {
+      width: 88%;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .small-gap {
+      margin-top: 16px;
+    }
+
+    .big-gap {
+      margin-top: 28px;
+    }
+
+    .center-text {
+      text-align: center;
+    }
+
+    .how-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .method-figure-card {
+      background: #fbfbfb;
+      border: 1px solid #ececec;
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .method-panel {
+      background: #fbfbfb;
+      border: 1px solid #ececec;
+      border-radius: 14px;
+      padding: 16px 18px;
+    }
+
+    .method-panel h3 {
+      margin: 0 0 8px 0;
+      font-size: 22px;
+      font-weight: 300;
+    }
+
+    .method-panel p {
+      margin: 0;
+      text-align: justify;
+    }
+
+    .steps {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .step {
+      padding: 12px 14px;
+      border: 1px solid #e6e6e6;
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    .step strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .two-col-center {
+      align-items: center;
+    }
+
+    .right-col-nudge {
+      margin-top: 12px;
+    }
+
+    .vbr-pair {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .vbr-col-quant {
+      flex: 0 1 31%;
+      min-width: 0;
+    }
+
+    .vbr-col-qual {
+      flex: 0 1 65%;
+      min-width: 0;
+    }
+
+    .construction-banner {
+      width: 1000px;
+      margin: 0 auto 12px auto;
+      padding: 8px 12px;
+      border: 1px solid #f0d27a;
+      border-radius: 10px;
+      background: #fff7da;
+      color: #7a5a00;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    .construction-icon {
+      margin-right: 8px;
+      font-size: 18px;
+      vertical-align: middle;
+    }
+
+    @media (max-width: 1100px) {
+      .construction-banner {
+        width: auto;
+      }
+
+      .right-col-nudge {
+        margin-top: 0;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .how-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .vbr-col-quant,
+      .vbr-col-qual {
+        flex-basis: 100%;
+      }
+    }
+
+    code.bibtex {
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.5;
+      background: #f7f7f7;
+      border-radius: 10px;
+      padding: 18px 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="construction-banner">
+    <span class="construction-icon">&#x1F6A7;</span>Under construction
+  </div>
+
+  <div class="content">
+    <h1 style="line-height: 1.05;">
+      <strong>LoGeR: Long-Context Geometric Reconstruction<br>with Hybrid Memory</strong>
+    </h1>
+    <p id="authors" style="text-align: center;">
+      <span><a href="https://junyi42.github.io/">Junyi Zhang<sup>1,2,*</sup></a></span>
+      <span><a href="https://scholar.google.com/citations?user=LQvi5XAAAAAJ">Charles Herrmann<sup>1,*</sup></a></span>
+      <span><a href="https://hurjunhwa.github.io/">Junhwa Hur<sup>1,*</sup></a></span>
+      <span><a href="https://chensun.me/">Chen Sun<sup>1</sup></a></span>
+      <span><a href="https://faculty.ucmerced.edu/mhyang/">Ming-Hsuan Yang<sup>1</sup></a></span>
+      <br>
+      <span><a href="https://scholar.google.com/citations?user=xZRRr-IAAAAJ&hl">Forrester Cole<sup>1</sup></a></span>
+      <span><a href="https://people.eecs.berkeley.edu/~trevor/">Trevor Darrell<sup>2</sup></a></span>
+      <span><a href="https://deqings.github.io/">Deqing Sun<sup>1,†</sup></a></span>
+      <br>
+      <span class="institution">
+        <sup>1</sup> Google DeepMind &nbsp;&nbsp;&nbsp;&nbsp;
+        <sup>2</sup> UC Berkeley
+      </span>
+      <span class="institution" style="margin-top: 0;">(*: Project leads, †: Direction lead)</span>
+    </p>
+
+    <img src="./figs/fig1_teaser.png" class="summary-img" style="width:100%;">
+    <br>
+
+    <div class="abstract">
+      <strong>LoGeR</strong> scales feedforward dense 3D reconstruction to extremely long videos. By processing video streams in chunks and bridging them with a novel hybrid memory module, LoGeR alleviates quadratic complexity bottlenecks. It combines <strong>Sliding Window Attention (SWA)</strong> for precise local alignment with <strong>Test-Time Training (TTT)</strong> for long-range global consistency, reducing drift over massive sequences up to <strong>19,000 frames</strong> without any post-hoc optimization.
+    </div>
+    <p class="button-row" style="text-align: center;">
+      <a href="./files/loger_paper.pdf" target="_blank">[Paper]</a> &nbsp;&nbsp;&nbsp;&nbsp;
+      <a href="#">[Arxiv (soon)]</a> &nbsp;&nbsp;&nbsp;&nbsp;
+      <a href="#">[Code (soon)]</a> &nbsp;&nbsp;&nbsp;&nbsp;
+      <a href="./files/bibtex.txt" target="_blank">[BibTeX]</a>
+    </p>
+  </div>
+
+  <div class="content">
+    <h2>Visual Results</h2>
+    <p class="section-intro">
+      Scaling to unprecedented horizons. Even without backend optimization, LoGeR maintains strong geometric coherence and reduces scale drift over kilometer-scale trajectories.
+    </p>
+    <img class="summary-img" src="./figs/fig14_gallery.png" style="width:100%;">
+    <p class="caption">Qualitative results on expansive in-the-wild and VBR sequences. Our fully feedforward approach accurately preserves large-scale structures and loop closures over thousands of frames.</p>
+  </div>
+
+  <div class="content">
+    <h2>Why Is Long-Context Geometry Hard?</h2>
+    <p class="section-intro">
+      Long-context reconstruction is limited by two complementary bottlenecks: a context wall in model scaling and a data wall in generalization.
+    </p>
+
+    <div class="two-col two-col-center">
+      <div class="col-half subcard">
+        <h3>Context Wall</h3>
+        <p>
+          Context Wall: Full bidirectional attention is powerful but quadratically expensive, while linear-memory recurrent models excessively compress data, losing local geometric details.
+        </p>
+        <img class="summary-img" src="./figs/tab1_arch_compare.png" style="width:100%;">
+        <p class="caption-left">LoGeR bypasses this trade-off. Our hybrid architecture maintains sub-quadratic linear scaling while preserving high-fidelity local geometry (via SWA) and ensuring global structural anchoring (via TTT).</p>
+      </div>
+
+      <div class="col-half subcard">
+        <h3>Data Wall</h3>
+        <p>
+          Data Wall: Simply engineering efficient attention (e.g., FastVGGT) isn't enough. Models trained solely on short-context "bubbles" inevitably fail to generalize to expansive, large-scale scenes.
+        </p>
+        <img class="summary-img" src="./figs/fig3_datawall.png" style="width:100%;">
+        <p class="caption-left">While efficient variants like FastVGGT alleviate memory bottlenecks, they still collapse on large-scale VBR trajectories. LoGeR successfully breaches the data wall by pairing its hybrid memory with a diverse, long-horizon training curriculum.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <h2>How LoGeR Works</h2>
+    <p class="section-intro">
+      LoGeR processes video streams chunk by chunk, retaining the high-fidelity reasoning of bidirectional attention locally, while deploying two specialized pathways to bridge the chunk boundaries.
+    </p>
+    <div class="how-grid">
+      <div class="method-figure-card">
+        <img class="summary-img" src="./figs/fig2_arch_detail.png" style="width:90%;">
+        <p class="caption-left">
+          Hybrid memory in LoGeR combines chunk-local bidirectional reasoning with SWA and chunk-wise TTT, preserving precise local geometry while anchoring global consistency over very long trajectories.
+        </p>
+      </div>
+
+      <div class="method-panel">
+        <h3>Chunk-wise process + hybrid memory</h3>
+        <div class="steps">
+          <div class="step">
+            <strong>1. Chunk-Wise Processing</strong>
+            Keep local inference windows in-distribution and computationally bounded.
+          </div>
+          <div class="step">
+            <strong>2. Bidirectional Backbone</strong>
+            Retain expressive multi-frame geometric reasoning within each chunk.
+          </div>
+          <div class="step">
+            <strong>3. SWA for Local Alignment</strong>
+            Pass uncompressed, short-range features to seamlessly align adjacent chunks.
+          </div>
+          <div class="step">
+            <strong>4. TTT for Global Memory</strong>
+            Continually update a compressed global state to prevent scale drift over long horizons.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <h2>Results on Long Sequences</h2>
+    <p class="section-intro">
+      Strong performance on long horizons. On standard KITTI benchmarks, LoGeR reduces the average ATE to 18.65. On the 19k-frame VBR dataset, it delivers a 30.8% relative improvement over prior feedforward approaches.
+    </p>
+
+    <img class="summary-img" src="./figs/tab2_kitti_quant.png" style="width:100%;">
+    <p class="caption-left">
+      <strong>KITTI.</strong> Both Pi3-Chunk and LoGeR strongly outperform prior feedforward baselines, and LoGeR* achieves the best average ATE at 18.65.
+    </p>
+
+    <div class="big-gap"></div>
+
+    <div class="vbr-pair">
+      <div class="vbr-col-quant">
+        <img class="summary-img" src="./figs/fig4_vbr.png" style="width:100%;">
+        <p class="caption-left">
+          <strong>VBR quantitative.</strong> On extremely long Rome trajectories, LoGeR increasingly pulls away as sequence length grows. We attribute this to TTT anchoring global scale, while simple chunk stitching accumulates scale errors over distance.
+        </p>
+      </div>
+
+      <div class="vbr-col-qual">
+        <img class="summary-img" src="./figs/fig5_vbr_qual.png" style="width:100%;">
+        <p class="caption-left">
+          Qualitative camera trajectories on the VBR dataset. LoGeR accurately preserves global scale and trajectory over very long sequences, closely matching ground truth where prior methods suffer from severe drift.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <h2>Results on Short Sequences</h2>
+    <p class="section-intro">
+      LoGeR also remains highly competitive on short-sequence benchmarks, delivering strong reconstruction and pose accuracy while preserving the long-horizon robustness that defines our approach.
+    </p>
+
+    <div class="two-col">
+      <div class="col-half" style="flex: 0 1 43%;">
+        <img class="summary-img" src="./figs/fig6_7scenes.png" style="width:100%;">
+        <p class="caption-left">
+          <strong>7-Scenes reconstruction.</strong> <em>Protocol: TTT3R.</em> On short-sequence 3D reconstruction, LoGeR and the Pi3-Chunk baseline both outperform prior work, with LoGeR showing a <strong>69.2%</strong> relative gain in our evaluation.
+        </p>
+      </div>
+
+      <div class="col-half right-col-nudge" style="flex: 0 1 54%;">
+        <img class="summary-img" src="./figs/fig12_7scenes2.png" style="width:100%;">
+        <p class="caption-left">
+          <strong>7-Scenes reconstruction.</strong> <em>Protocol: VGG-T3.</em> When uniformly sampling 100, 500, and 1k frames, LoGeR still achieves substantial improvements, including <strong>90.3%</strong> and <strong>72.1%</strong> error reduction at 1k frames against TTT3R and VGG-T3, respectively.
+        </p>
+      </div>
+    </div>
+
+    <div class="big-gap"></div>
+
+    <img class="summary-img" src="./figs/fig9_pose.png" style="width:100%;">
+    <p class="caption-left">
+      <strong>Pose evaluation.</strong> <em>Protocol: TTT3R.</em> On ScanNet and TUM-Dynamics, LoGeR substantially outperforms prior work, with <strong>80.0%</strong> and <strong>66.1%</strong> relative gains in our evaluation.
+    </p>
+  </div>
+
+  <div class="content">
+    <h2>BibTex</h2>
+    <font size="-0.">
+      <code class="bibtex">@article{zhang2026loger,
+  title={LoGeR: Long-Context Geometric Reconstruction with Hybrid Memory},
+  author={Zhang, Junyi and Herrmann, Charles and Hur, Junhwa and Sun, Chen and Yang, Ming-Hsuan and Cole, Forrester and Darrell, Trevor and Sun, Deqing},
+  journal={arXiv preprint},
+  year={2026}
+}</code>
+    </font>
+  </div>
+
+  <div class="content" id="acknowledgements">
+    <p><strong>Acknowledgements</strong>:
+      We borrow this webpage template from <a href="https://sd-complements-dino.github.io/">SD+DINO</a>, which is originally adapted from <a href="https://dreambooth.github.io/">DreamBooth</a>.
+    </p>
+  </div>
+</body>
+
+</html>
