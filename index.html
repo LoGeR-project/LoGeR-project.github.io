@@ -91,10 +91,11 @@
     }
 
     .abstract {
-      max-width: 800px;
+      max-width: 900px;
       margin: 18px auto 0 auto;
       font-size: 1.08em;
-      line-height: 1.6;
+      line-height: 1.2;
+      padding: 0 4px;
       color: #2f2f2f;
       text-align: justify;
     }
@@ -103,7 +104,7 @@
       text-align: justify;
       font-size: 1.1em;
       color: #333;
-      line-height: 1.6;
+      line-height: 1.25;
       margin-bottom: 20px;
     }
 
@@ -144,6 +145,13 @@
       padding-left: 10px;
       line-height: 1.5;
       text-align: left;
+    }
+
+    .caption strong,
+    .caption-left strong {
+      color: #111;
+      font-style: normal;
+      font-weight: 700;
     }
 
     .button-row a,
@@ -253,6 +261,22 @@
       min-width: 0;
     }
 
+    .context-two-col {
+      flex-wrap: nowrap;
+    }
+
+    .context-two-col .col-half {
+      box-sizing: border-box;
+    }
+
+    .context-two-col .context-left {
+      flex: 0 0 calc(52% - 12px);
+    }
+
+    .context-two-col .context-right {
+      flex: 0 0 calc(48% - 12px);
+    }
+
     .construction-banner {
       width: 1000px;
       margin: 0 auto 12px auto;
@@ -286,6 +310,15 @@
     @media (max-width: 900px) {
       .how-grid {
         grid-template-columns: 1fr;
+      }
+
+      .context-two-col {
+        flex-wrap: wrap;
+      }
+
+      .context-two-col .context-left,
+      .context-two-col .context-right {
+        flex: 1 1 100%;
       }
 
       .vbr-col-quant,
@@ -352,32 +385,32 @@
       Scaling to unprecedented horizons. Even without backend optimization, LoGeR maintains strong geometric coherence and reduces scale drift over kilometer-scale trajectories.
     </p>
     <img class="summary-img" src="./figs/fig14_gallery.png" style="width:100%;">
-    <p class="caption">Qualitative results on expansive in-the-wild and VBR sequences. Our fully feedforward approach accurately preserves large-scale structures and loop closures over thousands of frames.</p>
+    <p class="caption"><strong>Visual gallery.</strong> Qualitative results on expansive in-the-wild and VBR sequences. Our fully feedforward approach accurately preserves large-scale structures and loop closures over thousands of frames.</p>
   </div>
 
   <div class="content">
-    <h2>Why Is Long-Context Geometry Hard?</h2>
+    <h2>Why Is Long-Context Reconstruction Hard?</h2>
     <p class="section-intro">
-      Long-context reconstruction is limited by two complementary bottlenecks: a context wall in model scaling and a data wall in generalization.
+      Scaling feedforward 3D reconstruction to minutes-long videos is blocked by two fundamental barriers: an architectural <strong>"context wall"</strong> that restricts sequence length, and a training <strong>"data wall"</strong> that limits generalization to expansive environments.
     </p>
 
-    <div class="two-col two-col-center">
-      <div class="col-half subcard">
+    <div class="two-col two-col-center context-two-col">
+      <div class="col-half subcard context-left">
         <h3>Context Wall</h3>
         <p>
-          Context Wall: Full bidirectional attention is powerful but quadratically expensive, while linear-memory recurrent models excessively compress data, losing local geometric details.
+          While full bidirectional models (e.g., VGGT, &pi;<sup>3</sup>) excel at local reasoning, their quadratic cost prohibits long-context scaling. Linear-memory alternatives (e.g., CUT3R, TTT3R) solve the computation bottleneck, but introduce lossy compression that degrades fine-grained geometric alignment.  .
         </p>
         <img class="summary-img" src="./figs/tab1_arch_compare.png" style="width:100%;">
-        <p class="caption-left">LoGeR bypasses this trade-off. Our hybrid architecture maintains sub-quadratic linear scaling while preserving high-fidelity local geometry (via SWA) and ensuring global structural anchoring (via TTT).</p>
+        <p class="caption-left"> LoGeR bypasses this trade-off with a hybrid memory architecture that maintains sub-quadratic linear scaling while preserving high-fidelity local geometry (via SWA) and ensuring global structure consistency (via TTT).</p>
       </div>
 
-      <div class="col-half subcard">
+      <div class="col-half subcard context-right">
         <h3>Data Wall</h3>
         <p>
-          Data Wall: Simply engineering efficient attention (e.g., FastVGGT) isn't enough. Models trained solely on short-context "bubbles" inevitably fail to generalize to expansive, large-scale scenes.
+          Simply engineering efficient attention (e.g., FastVGGT) isn't enough. Models trained solely on short-context "bubbles" inevitably fail to generalize to expansive, large-scale scenes.
         </p>
         <img class="summary-img" src="./figs/fig3_datawall.png" style="width:100%;">
-        <p class="caption-left">While efficient variants like FastVGGT alleviate memory bottlenecks, they still collapse on large-scale VBR trajectories. LoGeR successfully breaches the data wall by pairing its hybrid memory with a diverse, long-horizon training curriculum.</p>
+        <p class="caption-left"> While efficient variants like FastVGGT alleviate memory bottlenecks, they still collapse on large-scale VBR trajectories. </p>
       </div>
     </div>
   </div>
@@ -389,9 +422,9 @@
     </p>
     <div class="how-grid">
       <div class="method-figure-card">
-        <img class="summary-img" src="./figs/fig2_arch_detail.png" style="width:90%;">
+        <img class="summary-img" src="./figs/fig2_arch_detail.png" style="width:83.5%;">
         <p class="caption-left">
-          Hybrid memory in LoGeR combines chunk-local bidirectional reasoning with SWA and chunk-wise TTT, preserving precise local geometry while anchoring global consistency over very long trajectories.
+          <strong>Hybrid memory block.</strong> LoGeR combines chunk-local bidirectional reasoning with SWA and chunk-wise TTT, preserving precise local geometry while anchoring global consistency over very long trajectories.
         </p>
       </div>
 
@@ -436,14 +469,14 @@
       <div class="vbr-col-quant">
         <img class="summary-img" src="./figs/fig4_vbr.png" style="width:100%;">
         <p class="caption-left">
-          <strong>VBR quantitative.</strong> On extremely long Rome trajectories, LoGeR increasingly pulls away as sequence length grows. We attribute this to TTT anchoring global scale, while simple chunk stitching accumulates scale errors over distance.
+          <strong>VBR quantitative.</strong> LoGeR increasingly pulls away as sequence length grows from 1k to 19k on extremely long trajectories. 
         </p>
       </div>
 
       <div class="vbr-col-qual">
         <img class="summary-img" src="./figs/fig5_vbr_qual.png" style="width:100%;">
         <p class="caption-left">
-          Qualitative camera trajectories on the VBR dataset. LoGeR accurately preserves global scale and trajectory over very long sequences, closely matching ground truth where prior methods suffer from severe drift.
+          <strong>VBR qualitative.</strong> LoGeR accurately preserves global scale and trajectory over very long sequences, closely matching ground truth where prior methods suffer from severe drift.
         </p>
       </div>
     </div>
@@ -459,14 +492,14 @@
       <div class="col-half" style="flex: 0 1 43%;">
         <img class="summary-img" src="./figs/fig6_7scenes.png" style="width:100%;">
         <p class="caption-left">
-          <strong>7-Scenes reconstruction.</strong> <em>Protocol: TTT3R.</em> On short-sequence 3D reconstruction, LoGeR and the Pi3-Chunk baseline both outperform prior work, with LoGeR showing a <strong>69.2%</strong> relative gain in our evaluation.
+          <strong>3D reconstruction of 7-Scenes (under TTT3R protocol).</strong> LoGeR and the Pi3-Chunk baseline both outperform prior work on 7-Scenes reconstruction, and LoGeR shows a 69.2% relative gain in our evaluation.
         </p>
       </div>
 
       <div class="col-half right-col-nudge" style="flex: 0 1 54%;">
         <img class="summary-img" src="./figs/fig12_7scenes2.png" style="width:100%;">
         <p class="caption-left">
-          <strong>7-Scenes reconstruction.</strong> <em>Protocol: VGG-T3.</em> When uniformly sampling 100, 500, and 1k frames, LoGeR still achieves substantial improvements, including <strong>90.3%</strong> and <strong>72.1%</strong> error reduction at 1k frames against TTT3R and VGG-T3, respectively.
+          <strong>3D reconstruction of 7-Scenes (under VGG-T<sup>3</sup> protocol).</strong> LoGeR maintains clear gains as we scale from 100 to 1k frames. At 1k frames, it reports 90.3% and 72.1% error reduction against TTT3R and VGG-T<sup>3</sup>, respectively.
         </p>
       </div>
     </div>
@@ -475,7 +508,7 @@
 
     <img class="summary-img" src="./figs/fig9_pose.png" style="width:100%;">
     <p class="caption-left">
-      <strong>Pose evaluation.</strong> <em>Protocol: TTT3R.</em> On ScanNet and TUM-Dynamics, LoGeR substantially outperforms prior work, with <strong>80.0%</strong> and <strong>66.1%</strong> relative gains in our evaluation.
+      <strong>Pose evaluation (under TTT3R protocol).</strong> LoGeR substantially outperforms prior work on ScanNet and TUM-Dynamics, achieving 80.0% and 66.1% relative gains in our evaluation.
     </p>
   </div>
 
