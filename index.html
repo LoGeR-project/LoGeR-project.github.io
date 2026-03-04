@@ -398,10 +398,10 @@
       <div class="col-half subcard context-left">
         <h3>Context Wall</h3>
         <p>
-          While full bidirectional models (e.g., VGGT, &pi;<sup>3</sup>) excel at local reasoning, their quadratic cost prohibits long-context scaling. Linear-memory alternatives (e.g., CUT3R, TTT3R) solve the computation bottleneck, but introduce lossy compression that degrades fine-grained geometric alignment.  .
+          While full bidirectional models (e.g., VGGT, &pi;<sup>3</sup>) excel at local reasoning, their quadratic cost prohibits long-context scaling. Linear-memory alternatives (e.g., CUT3R, TTT3R) solve the computation bottleneck, but introduce lossy compression that degrades fine-grained geometric alignment.
         </p>
         <img class="summary-img" src="./figs/tab1_arch_compare.png" style="width:100%;">
-        <p class="caption-left"> LoGeR bypasses this trade-off with a hybrid memory architecture that maintains sub-quadratic linear scaling while preserving high-fidelity local geometry (via SWA) and ensuring global structure consistency (via TTT).</p>
+        <p class="caption-left"> <strong>Architectural trade-off.</strong> LoGeR bypasses this trade-off with a hybrid memory architecture that maintains sub-quadratic linear scaling while preserving high-fidelity local geometry (via SWA) and ensuring global structure consistency (via TTT).</p>
       </div>
 
       <div class="col-half subcard context-right">
@@ -418,38 +418,63 @@
   <div class="content">
     <h2>How LoGeR Works</h2>
     <p class="section-intro">
-      LoGeR processes video streams chunk by chunk, retaining the high-fidelity reasoning of bidirectional attention locally, while deploying two specialized pathways to bridge the chunk boundaries.
+      Scaling 3D reconstruction to minutes-long videos requires rethinking how we process and store geometric context. LoGeR introduces a chunk-based hybrid architecture that decouples short-range alignment from long-range global anchoring.
     </p>
-    <div class="how-grid">
-      <div class="method-figure-card">
-        <img class="summary-img" src="./figs/fig2_arch_detail.png" style="width:83.5%;">
-        <p class="caption-left">
-          <strong>Hybrid memory block.</strong> LoGeR combines chunk-local bidirectional reasoning with SWA and chunk-wise TTT, preserving precise local geometry while anchoring global consistency over very long trajectories.
+  
+    <div class="high-level-block" style="margin-bottom: 40px; background-color: #fcfcfc; padding: 20px; border-radius: 10px; border: 1px solid #eaeaea;">
+      
+      <h3 style="margin-top: 0; margin-bottom: 20px; color: #333; font-size: 1.3em; text-align: left; font-weight: 400;"><strong>Method</strong>: Causal Chunk-wise Processing with Hybrid Memory Module</h3>
+      
+      <img class="summary-img" src="./figs/fig2_high_level.png" style="width: 75%; max-width: 900px; border-radius: 6px; display: block; margin: 0 auto;">
+      
+      <p class="caption" style="width: 100%; margin: 15px 0 0; text-align: left; font-size: 0.95em; color: #555;">
+        <strong>High-Level Abstraction.</strong> Instead of processing the entire video at once, LoGeR partitions the stream into manageable chunks. To maintain coherence across chunks, it employs a dual-pathway hybrid memory: <strong>Local Memory (SWA)</strong> ensures uncompressed, high-precision alignment between adjacent boundaries, while <strong>Global Memory (TTT)</strong> continually updates a compressed state to prevent scale drift over long sequences.
+      </p>
+    </div>
+  
+
+    <div class="detailed-block" style="display: flex; flex-wrap: wrap; gap: 40px; align-items: center; margin-top: 40px;">
+      
+      <div class="method-figure-card" style="flex: 1 1 50%; max-width: 500px; margin: 0 auto;">
+        <img class="summary-img" src="./figs/fig2_arch_detail.png" style="width: 90%; border-radius: 6px;">
+        <p class="caption-left" style="border-left: 3px solid #ccc; padding-left: 10px; margin-top: 15px; color: #666; font-style: italic; font-size: 0.9em;">
+          <strong>Detailed block structure of the hybrid memory module.</strong> Seamlessly integrating SWA and TTT to bridge consecutive video chunks.
         </p>
       </div>
+  
+      <div class="method-text" style="flex: 1 1 40%; min-width: 300px;">
+        <h3 style="margin-top: 0; color: #333; font-size: 1.3em;">Inside the Hybrid Memory Block</h3>
+        <p style="font-size: 1.05em; color: #555; line-height: 1.25; margin-bottom: 15px; margin-top: 0px;">
+          The internal data flow of a single residual block consists of four sequential operations:
+        </p>
+        
+        <div class="fancy-steps" style="display: flex; flex-direction: column; gap: 10px;">
+          
+          <div style="background: #fff; border: 1px solid #e6e6e6; border-left: 3px solid #c7c7c7; padding: 8px 10px; border-radius: 5px;">
+            <strong style="color: #333; font-size: 1.04em; display: block; margin-bottom: 1px;">1. Per-Frame Attention</strong>
+            <span style="color: #666; font-size: 0.94em; line-height: 1.25; display: block;">Extracts spatial features independently for each frame to establish the 2D visual foundation.</span>
+          </div>
 
-      <div class="method-panel">
-        <h3>Chunk-wise process + hybrid memory</h3>
-        <div class="steps">
-          <div class="step">
-            <strong>1. Chunk-Wise Processing</strong>
-            Keep local inference windows in-distribution and computationally bounded.
+          <div style="background: #fff; border: 1px solid #e6e6e6; border-left: 3px solid #c7c7c7; padding: 8px 10px; border-radius: 5px;">
+            <strong style="color: #333; font-size: 1.04em; display: block; margin-bottom: 1px;">2. Sparse SWA (Local Memory)</strong>
+            <span style="color: #666; font-size: 0.94em; line-height: 1.25; display: block;">Establishes a lossless information path across adjacent chunks to preserve high-precision geometric alignment.</span>
           </div>
-          <div class="step">
-            <strong>2. Bidirectional Backbone</strong>
-            Retain expressive multi-frame geometric reasoning within each chunk.
+
+          <div style="background: #fff; border: 1px solid #e6e6e6; border-left: 3px solid #c7c7c7; padding: 8px 10px; border-radius: 5px;">
+            <strong style="color: #333; font-size: 1.04em; display: block; margin-bottom: 1px;">3. Chunk-Wise TTT (Global Memory)</strong>
+            <span style="color: #666; font-size: 0.94em; line-height: 1.25; display: block;">Integrates long-range context by maintaining fast weights via an efficient <em>apply-then-update</em> procedure.</span>
           </div>
-          <div class="step">
-            <strong>3. SWA for Local Alignment</strong>
-            Pass uncompressed, short-range features to seamlessly align adjacent chunks.
+
+          <div style="background: #fff; border: 1px solid #e6e6e6; border-left: 3px solid #c7c7c7; padding: 8px 10px; border-radius: 5px;">
+            <strong style="color: #333; font-size: 1.04em; display: block; margin-bottom: 1px;">4. Chunk-Wise Bi-Attention</strong>
+            <span style="color: #666; font-size: 0.94em; line-height: 1.25; display: block;">Performs powerful, dense geometric reasoning within all the frames of the current chunk.</span>
           </div>
-          <div class="step">
-            <strong>4. TTT for Global Memory</strong>
-            Continually update a compressed global state to prevent scale drift over long horizons.
-          </div>
+
         </div>
       </div>
+      
     </div>
+  
   </div>
 
   <div class="content">
@@ -485,7 +510,7 @@
   <div class="content">
     <h2>Results on Short Sequences</h2>
     <p class="section-intro">
-      LoGeR also remains highly competitive on short-sequence benchmarks, delivering strong reconstruction and pose accuracy while preserving the long-horizon robustness that defines our approach.
+      LoGeR also remains highly competitive on short-sequence benchmarks. It achieves state-of-the-art reconstruction and pose accuracy while running significantly faster than full-attention baselines like VGGT.
     </p>
 
     <div class="two-col">
@@ -508,7 +533,7 @@
 
     <img class="summary-img" src="./figs/fig9_pose.png" style="width:100%;">
     <p class="caption-left">
-      <strong>Pose evaluation (under TTT3R protocol).</strong> LoGeR substantially outperforms prior work on ScanNet and TUM-Dynamics, achieving 80.0% and 66.1% relative gains in our evaluation.
+      <strong>Pose evaluation on ScanNet and TUM-Dynamics (under TTT3R protocol).</strong> LoGeR substantially outperforms prior work on ScanNet and TUM-Dynamics, achieving 80.0% and 66.1% relative gains in our evaluation.
     </p>
   </div>
 
