@@ -379,13 +379,17 @@
         <sup>1</sup> Google DeepMind &nbsp;&nbsp;&nbsp;&nbsp;
         <sup>2</sup> UC Berkeley
       </span>
-      <span class="institution" style="margin-top: 0;">(*: Project leads, †: Direction lead)</span>
+      <span class="institution" style="margin-top: 0; margin-bottom: -5px;">(*: Project leads, †: Direction lead)</span>
     </p>
 
-    <img src="./figs/fig1_teaser.png" class="summary-img" style="width:100%;">
+    <a href="./files/loger_teaser_vid_lowres.mp4" target="_blank" title="Open teaser video">
+      <video class="summary-img" style="width:100%;" autoplay muted loop playsinline controls preload="metadata" poster="./figs/fig1_teaser.png">
+        <source src="./files/loger_teaser_vid_lowres.mp4" type="video/mp4">
+      </video>
+    </a>
     <br>
 
-    <div class="abstract">
+    <div class="abstract" style="margin-top: -10px;">
       <strong>LoGeR</strong> scales feedforward dense 3D reconstruction to extremely long videos. By processing video streams in chunks and bridging them with a novel hybrid memory module, LoGeR alleviates quadratic complexity bottlenecks. It combines <strong>Sliding Window Attention (SWA)</strong> for precise local alignment with <strong>Test-Time Training (TTT)</strong> for long-range global consistency, reducing drift over massive sequences up to <strong>19,000 frames</strong> without any post-hoc optimization.
     </div>
     <p class="button-row" style="text-align: center; margin-top: 14px;">
